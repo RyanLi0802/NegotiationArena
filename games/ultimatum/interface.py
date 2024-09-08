@@ -1,12 +1,12 @@
 from negotiationarena.game_objects.resource import Resources
 from negotiationarena.constants import *
 from negotiationarena.utils import *
-from negotiationarena.agent_message import AgentMessageInterface
+from negotiationarena.agent_message import AgentMessage
 from games.ultimatum.prompt import ultimatum_prompt
 from negotiationarena.parser import ExchangeGameDefaultParser
 
 
-class UltimatumMultiTurnAgentMessage(AgentMessageInterface):
+class UltimatumMultiTurnAgentMessage(AgentMessage):
     """
     Structured format for agent messages.
     Should define what agents can see of each other messages.
