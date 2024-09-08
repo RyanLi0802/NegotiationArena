@@ -43,10 +43,16 @@ class LocalAgent(Agent):
 
     def init_agent(self, system_prompt, role):
         if AGENT_ONE in self.agent_name:
+            self.update_conversation_tracking(
+                self.prompt_entity_initializer, system_prompt
+            )
             # we use the user role to tell the assistant that it has to start.
             self.update_conversation_tracking("user", role)
         elif AGENT_TWO in self.agent_name:
             system_prompt = system_prompt + role
+            self.update_conversation_tracking(
+                self.prompt_entity_initializer, system_prompt
+            )
         else:
             raise "No Player 1 or Player 2 in role"
         
