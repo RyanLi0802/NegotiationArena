@@ -51,6 +51,28 @@ class MaximisationGoal(Goal):
     def json(self):
         return {"_type": "maximisation_goal", "_value": self.inital_resources}
 
+class TradingGoal(Goal):
+    # goal = "Acquire as many resources as possible"
+
+    def __init__(self, inital_resources: Resources, valuation: Valuation):
+        self.inital_resources = inital_resources
+        self.valuation = valuation
+        self.goal = f"Here is how you value the available resources: {valuation}. Your opponent might value the resources differently than you do.\nAcquire as much value from the resources as possible."
+
+    def __str__(self):
+        return self.goal
+
+    def to_prompt(self):
+        return self.goal
+
+    def goal_reached(self, final_resources: Resources):
+        acquired_resources = final_resources - self.inital_resources
+        acquired_value = sum([acquired_resources.resource_dict[r] * self.valuation.valuation_dict.get(r, 0) for r in acquired_resources.resource_dict])
+        return f"Acquired Resources: {acquired_resources};\nTotal Acquired Value: {acquired_value}"
+
+    def json(self):
+        return {"_type": "trading_goal", "_value": self.valuation}
+
 
 class UltimatumGoal(Goal):
     goal = ""

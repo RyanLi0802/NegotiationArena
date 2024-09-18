@@ -1,5 +1,6 @@
-MONEY_TOKEN = "ZUP"
+MONEY_TOKEN = "DOLLARS"
 
+GAME_RESOURCE_TAG = "resources available in the game"
 RESOURCES_TAG = "my resources"
 GOALS_TAG = "my goals"
 REASONING_TAG = "reason"

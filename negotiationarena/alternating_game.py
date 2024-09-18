@@ -224,6 +224,11 @@ class AlternatingGame(Game):
 
         # log meta information
         log_str = "Game Settings\n\n"
+        for k, v in settings.items():
+            if not isinstance(v, list):
+                log_str += f"\t{k}: {v}\n"
+
+        log_str += "------------------ \n"
         for idx, player_settings in enumerate(
             zip(
                 *[

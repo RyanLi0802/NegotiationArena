@@ -6,13 +6,14 @@ import time
 
 from copy import deepcopy
 from langgraph.checkpoint.memory import MemorySaver
+from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 from negotiationarena.agents.agents import Agent
 from negotiationarena.constants import AGENT_TWO, AGENT_ONE
 from negotiationarena.llm.custom_chat_model import CustomChatModel
 
 
-class LocalAgent(Agent):
+class CustomAgent(Agent):
     def __init__(
         self,
         agent_name: str,
@@ -36,8 +37,12 @@ class LocalAgent(Agent):
         # )
         self.temperature = temperature
         self.max_tokens = max_tokens
-        self.llm = CustomChatModel(model_name=model, model_type=model_type, temperature=temperature)
-        self.llm.client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY").chat.completions
+        if "gpt" in model:
+            self.llm = ChatOpenAI(model=model, temperature=temperature)
+        else:
+            self.llm = CustomChatModel(model_name=model, model_type=model_type, temperature=temperature)
+            self.llm.client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY").chat.completions
+        
         self.tools = tools
         
 
@@ -110,6 +115,7 @@ class LocalAgent(Agent):
         #     messages.append((msg["role"], msg['content']))
         msg = self.conversation[-1]
         response = self.agent.invoke({"messages": [(msg['role'], msg['content'])]}, self.agent_config)
+        # print(response)
         return response['messages'][-1].content
 
     def update_conversation_tracking(self, role, message):

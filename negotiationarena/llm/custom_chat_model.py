@@ -292,9 +292,7 @@ class CustomChatModel(ChatOpenAI):
                     'role': 'system',
                     'content': bind_tools_to_system_prompt(system_prompt, self.tools),
                 }] + message_dicts
-        # print()
-        # print(message_dicts)
-        # print()
+
         return message_dicts, params
     
     def _create_chat_result(self, response: Union[dict, BaseModel]) -> ChatResult:
@@ -307,7 +305,7 @@ class CustomChatModel(ChatOpenAI):
                 full_message = res["message"]["content"]
                 scratchpad, parsed_message = parse_llm_output(full_message)
                 if parsed_message['type'] == 'text_message':
-                    res["message"]['full_message'] = full_message
+                    # res["message"]['full_message'] = full_message
                     res["message"]["content"] = parsed_message["content"]
                 else:
                     assert parsed_message['type'] == 'tool_calls'
@@ -323,10 +321,10 @@ class CustomChatModel(ChatOpenAI):
                                 'arguments': tool_call['arguments']
                             }
                         })
-                    res["message"]['full_message'] = scratchpad + json.dumps(parsed_message, indent=4)
                     res["message"]["tool_calls"] = tool_calls
                     res["message"]['content'] = None
                     res['finish_reason'] = 'tool_calls'
+            res["message"]['full_message'] = scratchpad + json.dumps(parsed_message, indent=4)
             message = _convert_dict_to_message(res["message"])
             generation_info = dict(finish_reason=res.get("finish_reason"))
             if "logprobs" in res:

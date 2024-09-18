@@ -54,6 +54,13 @@ class Resources:
 
     def get(self, key, default=None):
         return self.resource_dict.get(key, default)
+    
+    def add(self, key, num):
+        self.resource_dict[key] = self.resource_dict.get(key, 0) + num
+    
+    def remove(self, key, num):
+        if key in self.resource_dict:
+            self.resource_dict[key] = max(0, self.resource_dict[key] - num)
 
     def only_keys(self):
         return ", ".join(list(self.resource_dict.keys()))
