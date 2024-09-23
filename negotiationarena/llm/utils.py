@@ -5,29 +5,6 @@ import uuid
 import re
 
 
-# def parse_tool_calls(res):
-#     start_index = res.find('{')
-#     end_index = res.rfind('}') if start_index != -1 else -1
-    
-#     # if no json object is found, treat the entire output as one text response
-#     if start_index == -1 or end_index == -1:
-#         return {
-#             "type": "text_message",
-#             "content": res,
-#         }
-#     else:
-#         # get the json array
-#         json_string = res[start_index:end_index+1]
-#     # print(json_string)
-#     # output = json.loads(result[1].split("\n")[1].strip("Output: "))
-#     try:
-#         output = json.loads(json_string)
-#     except Exception as e:
-#         logging.error(traceback.format_exc())
-#         return None
-    
-#     return output
-
 def clean_json_string(json_string: str) -> str:
     # Remove trailing commas before closing braces/brackets in JSON structures
     cleaned_json_string = re.sub(r',\s*(\}|\])', r'\1', json_string)

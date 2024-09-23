@@ -32,6 +32,7 @@ class TradingGame(AlternatingGameEndsOnTag):
                 "turn": "None",
                 "settings": dict(
                     resources_support_set=f"{resources_support_set}",
+                    player_names = [AGENT_ONE, AGENT_TWO],
                     player_goals=player_goals,
                     player_initial_resources=player_initial_resources,
                     player_social_behaviour=player_social_behaviour,

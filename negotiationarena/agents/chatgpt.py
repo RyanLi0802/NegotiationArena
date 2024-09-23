@@ -30,7 +30,10 @@ class ChatGPTAgent(Agent):
             if seed is None
             else seed
         )
-        self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        if 'gpt' in model:
+            self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+        else:
+            self.client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY")
         self.temperature = temperature
         self.max_tokens = max_tokens
 

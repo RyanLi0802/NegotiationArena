@@ -240,7 +240,7 @@ class AlternatingGame(Game):
         ):
             log_str += "Player {} Settings:\n".format(idx + 1)
             log_str += "\n".join(
-                ["\t{}: {}".format(_[0], _[1]) for _ in player_settings]
+                ["\t{}: {}".format(_[0], _[1]) for _ in player_settings if _[0] != 'player_social_behaviour']
             )
             log_str += "\n\n"
         log_str += "------------------ \n"

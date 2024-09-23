@@ -52,7 +52,7 @@ class MaximisationGoal(Goal):
         return {"_type": "maximisation_goal", "_value": self.inital_resources}
 
 class TradingGoal(Goal):
-    # goal = "Acquire as many resources as possible"
+    goal = ""
 
     def __init__(self, inital_resources: Resources, valuation: Valuation):
         self.inital_resources = inital_resources
@@ -60,6 +60,9 @@ class TradingGoal(Goal):
         self.goal = f"Here is how you value the available resources: {valuation}. Your opponent might value the resources differently than you do.\nAcquire as much value from the resources as possible."
 
     def __str__(self):
+        return self.goal
+    
+    def __repr__(self):
         return self.goal
 
     def to_prompt(self):

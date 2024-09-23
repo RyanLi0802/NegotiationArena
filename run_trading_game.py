@@ -66,7 +66,6 @@ for _ in range(3):
 
         a2 = ChatGPTAgent(agent_name=AGENT_TWO, model="gpt-4o")
 
-        # buy sell game
         c = TradingGame(
             players=[a1, a2],
             iterations=8,
@@ -101,5 +100,4 @@ for _ in range(3):
         print(f"Exception Type: {exception_type}")
         print(f"Exception Message: {exception_message}")
         print(f"Stack Trace:\n{stack_trace}")
-        
         

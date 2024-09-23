@@ -38,9 +38,9 @@ class CustomAgent(Agent):
         self.temperature = temperature
         self.max_tokens = max_tokens
         if "gpt" in model:
-            self.llm = ChatOpenAI(model=model, temperature=temperature)
+            self.llm = ChatOpenAI(model=model, temperature=temperature, seed=seed)
         else:
-            self.llm = CustomChatModel(model_name=model, model_type=model_type, temperature=temperature)
+            self.llm = CustomChatModel(model_name=model, model_type=model_type, temperature=temperature, seed=seed)
             self.llm.client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY").chat.completions
         
         self.tools = tools
