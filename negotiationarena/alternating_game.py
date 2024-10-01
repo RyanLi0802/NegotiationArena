@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod, abstractproperty
 from negotiationarena.game_objects.game import Game
 from negotiationarena.agents.agents import Agent
 from negotiationarena.utils import get_next_filename
-from negotiationarena.constants import PLAYER_ANSWER_TAG
+from negotiationarena.constants import *
 
 
 class AlternatingGame(Game):
@@ -258,7 +258,7 @@ class AlternatingGame(Game):
                     for k, v in {
                         **state["player_public_info_dict"],
                         **state["player_private_info_dict"],
-                    }.items()
+                    }.items() if k != GAME_RESOURCE_TAG
                 ],
             ]
             log_str += "\n".join(data)

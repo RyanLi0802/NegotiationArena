@@ -62,7 +62,8 @@ for _ in range(3):
     try:
 
         # a1 = CustomAgent(agent_name=AGENT_ONE, model_type="llama3-8b", temperature=0.3, tools=[add_resource, remove_resource])
-        a1 = CustomAgent(agent_name=AGENT_ONE, model="gpt-4o", model_type="openai-gpt", temperature=0.3, tools=[add_resource, remove_resource])
+        # a1 = CustomAgent(agent_name=AGENT_ONE, model="gpt-4o", model_type="openai-gpt", temperature=0.3, tools=[add_resource, remove_resource])
+        a1 = ChatGPTAgent(agent_name=AGENT_ONE, model="gpt-4o")
 
         a2 = ChatGPTAgent(agent_name=AGENT_TWO, model="gpt-4o")
 
@@ -84,7 +85,7 @@ for _ in range(3):
                 f"You are {AGENT_ONE}, start by making a proposal.",
                 f"You are {AGENT_TWO}, start by responding to a trade.",
             ],
-            log_dir=".logs/trading_game_v0",
+            log_dir=".logs/trading_game_base_script",
         )
 
 
