@@ -24,6 +24,13 @@ class Valuation:
     def to_prompt(self):
         res = [f"{k}: {v}" for k, v in self.valuation_dict.items()]
         return ", ".join(res)
+    
+    def muliply(self, key, num):
+        if key in self.valuation_dict:
+            self.valuation_dict[key] = self.valuation_dict[key] * num
+            return True
+        
+        return False
 
     def __str__(self):
         res = [
