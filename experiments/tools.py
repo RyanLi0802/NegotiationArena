@@ -42,6 +42,9 @@ def transform_value(resource_to_transform_value: str, multiplier: int) -> str:
     Returns:
         str: A message indicating the success or failure of the transformation.
     """
+    print("-------------------")
+    print(f"The value of '{resource_to_transform_value}' has been successfully transformed for both parties by a factor of {multiplier}.")
+    print("-------------------")
     if multiplier <= 0:
         return f"Error: Multiplier must be greater than 0. Provided value: {multiplier}."
     
@@ -64,17 +67,21 @@ def change_value(agent_name: str, resource_to_change_value: str, multiplier: int
     Returns:
         str: A message indicating the success or failure of the change.
     """
+    print("-------------------")
+    print(f"The value of '{resource_to_change_value}' has been successfully changed for Player {agent_name} by a factor of {multiplier}.")
+    print("-------------------")
+
     if multiplier <= 0:
         return f"Error: Multiplier must be greater than 0. Provided value: {multiplier}."
     
     if "red" in agent_name.lower():
         if v1.muliply(resource_to_change_value, multiplier):
-            return f"The value of '{resource_to_change_value}' has been successfully transformed for Player RED by a factor of {multiplier}."
+            return f"The value of '{resource_to_change_value}' has been successfully changed for Player RED by a factor of {multiplier}."
         return f"Error: Resource '{resource_to_change_value}' not found in the available pool."
     
     elif "blue" in agent_name.lower():
         if v2.muliply(resource_to_change_value, multiplier):
-            return f"The value of '{resource_to_change_value}' has been successfully transformed for Player BLUE by a factor of {multiplier}."
+            return f"The value of '{resource_to_change_value}' has been successfully changed for Player BLUE by a factor of {multiplier}."
         return f"Error: Resource '{resource_to_change_value}' not found in the available pool."
     
     return f"Error: Agent '{agent_name}' not found in the available pool."
@@ -93,6 +100,10 @@ def swap_value(agent_name, resource1: str, resource2: str) -> str:
         str: A message indicating the success or failure of the swap.
     """
     
+    print("-------------------")
+    print(f"The values of '{resource1}' and '{resource2}' have been successfully swapped for Player {agent_name}.")
+    print("-------------------")
+
     if "red" in agent_name.lower():
         if v1.swap(resource1, resource2):
             return f"The values of '{resource1}' and '{resource2}' have been successfully swapped for Player RED."
@@ -129,16 +140,78 @@ def chain_of_thought_reasoning(state_description: str) -> str:
         ]
     )
 
+    print("-------------------")
+    print(f"Chain of thought reasoning: {response['choices'][0]['message']['content']}")
+    print("-------------------")
+    # Extract and return the reasoning from the response
+    return response['choices'][0]['message']['content']
+
+@tool
+def strategy_planning(state_description: str) -> str:
+    """
+    Perform strategy planning reasoning to analyze the current game state 
+    and plan multiple steps ahead.
+
+    Args:
+        state_description (str): A detailed description of the current state 
+                                  of the game, including relevant events, 
+                                  player status, and environmental factors.
+
+    Returns:
+        str: A detailed analysis of the current game state and plans for multiple steps ahead.
+    """
+
+    # Use OpenAI's GPT-4 model to conduct reasoning based on the provided game state.
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "user", "content": f"Analyze the following game state and plan multiple steps ahead: {state_description}"}
+        ]
+    )
+
+    print("-------------------")
+    print(f"Strategy Planning: {response['choices'][0]['message']['content']}")
+    print("-------------------")
+    # Extract and return the reasoning from the response
+    return response['choices'][0]['message']['content']
+
+@tool
+def empathy_simulation(state_description: str) -> str:
+    """
+    Perform empathy simulation that allows the agent to simulate the other party's perspective.
+
+    Args:
+        state_description (str): A detailed description of the current state 
+                                  of the game, including relevant events, 
+                                  player status, and environmental factors.
+
+    Returns:
+        str: A detailed analysis of the current game state and simulation of the other party's perspective.
+    """
+
+    # Use OpenAI's GPT-4 model to conduct reasoning based on the provided game state.
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "user", "content": f"Analyze the following game state and simulate the other party's perspective: {state_description}"}
+        ]
+    )
+
+    print("-------------------")
+    print(f"Empathy Similation: {response['choices'][0]['message']['content']}")
+    print("-------------------")
     # Extract and return the reasoning from the response
     return response['choices'][0]['message']['content']
 
 all_tools = {
     "add_resource": add_resource,
     "remove_resource": remove_resource,
-    "chain_of_thought_reasoning": chain_of_thought_reasoning,
     "transform_value": transform_value,
     "change_value": change_value,
     "swap_value": swap_value,
+    "chain_of_thought_reasoning": chain_of_thought_reasoning,
+    "strategy_planning": strategy_planning,
+    "empathy_simulation": empathy_simulation,
 }
 
 def get_tools_by_names(tool_names):

@@ -203,6 +203,15 @@ def main():
     print(f"predictions: {predictions}")
     print(f"Accuracy: {accuracy_score(targets, predictions)}")
     print(f"F1 Score: {f1_score(targets, predictions)}")
+    metric = {}
+    metric["targets"] = targets
+    metric["predictions"] = predictions
+    metric["accuracy"] = accuracy_score(targets, predictions)
+    metric["f1"] = f1_score(targets, predictions)
+    
+    with open(f".logs/{args.experiment_name}/metric.json", "w") as f:
+        f.write(json.dumps(metric, indent=4))
+
     
 if __name__ == "__main__":
     main()
