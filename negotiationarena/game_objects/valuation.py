@@ -32,6 +32,13 @@ class Valuation:
         
         return False
 
+    def swap(self, key1, key2):
+        if key1 in self.valuation_dict and key2 in self.valuation_dict:
+            self.valuation_dict[key1], self.valuation_dict[key2] = self.valuation_dict[key2], self.valuation_dict[key1]
+            return True
+        
+        return False
+
     def __str__(self):
         res = [
             f"{k}: {v} {MONEY_TOKEN}" for k, v in self.valuation_dict.items()

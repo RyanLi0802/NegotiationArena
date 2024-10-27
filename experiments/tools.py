@@ -36,7 +36,7 @@ def transform_value(resource_to_transform_value: str, multiplier: int) -> str:
     Magically changes the perceived value of a given resource for both parties in the game using a multiplier.
     
     Args:
-        resource_to_transform_value (str): The name of the resource whose value is to be transformed.
+        resource_to_transform_value (str): The name of the resource whose resource value is to be transformed.
         multiplier (int): The multiplier (>0) by which to adjust the resource's value.
         
     Returns:
@@ -52,17 +52,17 @@ def transform_value(resource_to_transform_value: str, multiplier: int) -> str:
     return f"Error: Resource '{resource_to_transform_value}' not found in the available pool."
 
 @tool
-def change_value(agent_name, resource_to_change_value: str, multiplier: int) -> str:
+def change_value(agent_name: str, resource_to_change_value: str, multiplier: int) -> str:
     """
-    Magically changes the perceived value of a given resource for both parties in the game using a multiplier.
+    Magically changes the perceived value of a given resource for an agent in the game using a multiplier.
     
     Args:
-        agent_name (str): The name of the agent (RED or BLUE) whose value is to be changed.
+        agent_name (str): The name of the agent (RED or BLUE) whose resource value is to be changed.
         resource_to_change_value (str): The name of the resource whose value is to be changed.
         multiplier (int): The multiplier (>0) by which to adjust the resource's value.
         
     Returns:
-        str: A message indicating the success or failure of the transformation.
+        str: A message indicating the success or failure of the change.
     """
     if multiplier <= 0:
         return f"Error: Multiplier must be greater than 0. Provided value: {multiplier}."
@@ -76,6 +76,32 @@ def change_value(agent_name, resource_to_change_value: str, multiplier: int) -> 
         if v2.muliply(resource_to_change_value, multiplier):
             return f"The value of '{resource_to_change_value}' has been successfully transformed for Player BLUE by a factor of {multiplier}."
         return f"Error: Resource '{resource_to_change_value}' not found in the available pool."
+    
+    return f"Error: Agent '{agent_name}' not found in the available pool."
+
+@tool
+def swap_value(agent_name, resource1: str, resource2: str) -> str:
+    """
+    Magically swap the perceived value of two resources for an agent in the game.
+    
+    Args:
+        agent_name (str): The name of the agent (RED or BLUE) whose resource value are to be swapped.
+        resource1 (str): The name of the first resource whose value is to be swapped.
+        resource2 (str): The name of the second resource whose value is to be swapped.
+        
+    Returns:
+        str: A message indicating the success or failure of the swap.
+    """
+    
+    if "red" in agent_name.lower():
+        if v1.swap(resource1, resource2):
+            return f"The values of '{resource1}' and '{resource2}' have been successfully swapped for Player RED."
+        return f"Error: Resource '{resource1}' or '{resource2}' not found in the available pool."
+    
+    elif "blue" in agent_name.lower():
+        if v2.swap(resource1, resource2):
+            return f"The values of '{resource1}' and '{resource2}' have been successfully swapped for Player BLUE."
+        return f"Error: Resource '{resource1}' or '{resource2}' not found in the available pool."
     
     return f"Error: Agent '{agent_name}' not found in the available pool."
 
@@ -111,6 +137,8 @@ all_tools = {
     "remove_resource": remove_resource,
     "chain_of_thought_reasoning": chain_of_thought_reasoning,
     "transform_value": transform_value,
+    "change_value": change_value,
+    "swap_value": swap_value,
 }
 
 def get_tools_by_names(tool_names):
