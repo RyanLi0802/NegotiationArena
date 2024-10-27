@@ -25,6 +25,7 @@ from negotiationarena.game_objects.valuation import Valuation
 from negotiationarena.constants import AGENT_ONE, AGENT_TWO
 
 from sklearn.metrics import accuracy_score, f1_score
+import json
 
 """
 Example usage:
@@ -46,6 +47,9 @@ def main():
     parser.add_argument('--additional_prompt', '-a', type=str, default="", help='additional prompt for the advanced model')
     parser.add_argument('--experiment_name', '-n', type=str, required=True, help='name of the experiment')
     parser.add_argument('--tools', '-t', nargs='+', required=True, help='list of tools')
+    parser.add_argument('--available_resources', type=str, required=True, help='available resources')
+    parser.add_argument('--values_red', type=str, required=True, help='values')
+    parser.add_argument('--values_blue', type=str, required=True, help='values')
     args = parser.parse_args()
     
     load_dotenv("env")
@@ -69,9 +73,9 @@ def main():
             print(f"Round {i}")
             
             # initializes game state
-            available_resources.resource_dict = {"X": 25, "Y": 0, "Z": 20}
-            v1.valuation_dict = {"X": 2, "Y": 50, "Z": 1}
-            v2.valuation_dict = {"X": 1, "Y": 4, "Z": 3}
+            available_resources.resource_dict = json.loads(args.available_resources)
+            v1.valuation_dict = json.loads(args.values_red)
+            v2.valuation_dict = json.loads(args.values_blue)
             
             # generate a new seed in each round for different behaviors
             new_seed = random.randint(0, 2**32 - 1)
@@ -80,15 +84,20 @@ def main():
                 target = 0
                 
                 if 'gpt' in args.model:
-                    a1 = CustomAgent(agent_name=AGENT_ONE, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
-                    a2 = ChatGPTAgent(agent_name=AGENT_TWO, model=args.model, seed=new_seed)
+                    # a1 = CustomAgent(agent_name=AGENT_ONE, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
+                    player_red = CustomAgent(agent_name=AGENT_ONE, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
+                    # a2 = ChatGPTAgent(agent_name=AGENT_TWO, model=args.model, seed=new_seed)
+                    player_blue = ChatGPTAgent(agent_name=AGENT_TWO, model=args.model, seed=new_seed)
                 else:
                     # local model
-                    a1 = CustomAgent(agent_name=AGENT_ONE, model_type=args.model, temperature=0.3, tools=tools, seed=new_seed)
-                    a2 = ChatGPTAgent(agent_name=AGENT_TWO, model="default", seed=new_seed)
+                    # a1 = CustomAgent(agent_name=AGENT_ONE, model_type=args.model, temperature=0.3, tools=tools, seed=new_seed)
+                    player_red = CustomAgent(agent_name=AGENT_ONE, model_type=args.model, temperature=0.3, tools=tools, seed=new_seed)
+                    # a2 = ChatGPTAgent(agent_name=AGENT_TWO, model="default", seed=new_seed)
+                    player_blue = ChatGPTAgent(agent_name=AGENT_TWO, model="default", seed=new_seed)
                 
                 c1 = TradingGame(
-                    players=[a1, a2],
+                    # players=[a1, a2],
+                    players = [player_red, player_blue],
                     iterations=8,
                     resources_support_set=available_resources,
                     player_goals=[
@@ -113,15 +122,20 @@ def main():
                 
                 # switch model names
                 if 'gpt' in args.model:
-                    a1 = CustomAgent(agent_name=AGENT_TWO, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
-                    a2 = ChatGPTAgent(agent_name=AGENT_ONE, model=args.model, seed=new_seed)
+                    # a1 = CustomAgent(agent_name=AGENT_TWO, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
+                    player_blue = CustomAgent(agent_name=AGENT_TWO, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
+                    # a2 = ChatGPTAgent(agent_name=AGENT_ONE, model=args.model, seed=new_seed)
+                    player_red = ChatGPTAgent(agent_name=AGENT_ONE, model=args.model, seed=new_seed)
                 else:
                     # local model
-                    a1 = CustomAgent(agent_name=AGENT_TWO, model_type=args.model, temperature=0.3, tools=tools, seed=new_seed)
-                    a2 = ChatGPTAgent(agent_name=AGENT_ONE, model="default", seed=new_seed)
+                    # a1 = CustomAgent(agent_name=AGENT_TWO, model_type=args.model, temperature=0.3, tools=tools, seed=new_seed)
+                    player_blue = CustomAgent(agent_name=AGENT_TWO, model_type=args.model, temperature=0.3, tools=tools, seed=new_seed)
+                    # a2 = ChatGPTAgent(agent_name=AGENT_ONE, model="default", seed=new_seed)
+                    player_red = ChatGPTAgent(agent_name=AGENT_ONE, model="default", seed=new_seed)
                 
                 c1 = TradingGame(
-                    players=[a2, a1],
+                    # players=[a2, a1],
+                    players=[player_red, player_blue],
                     iterations=8,
                     resources_support_set=available_resources,
                     player_goals=[

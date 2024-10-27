@@ -52,6 +52,34 @@ def transform_value(resource_to_transform_value: str, multiplier: int) -> str:
     return f"Error: Resource '{resource_to_transform_value}' not found in the available pool."
 
 @tool
+def change_value(agent_name, resource_to_change_value: str, multiplier: int) -> str:
+    """
+    Magically changes the perceived value of a given resource for both parties in the game using a multiplier.
+    
+    Args:
+        agent_name (str): The name of the agent (RED or BLUE) whose value is to be changed.
+        resource_to_change_value (str): The name of the resource whose value is to be changed.
+        multiplier (int): The multiplier (>0) by which to adjust the resource's value.
+        
+    Returns:
+        str: A message indicating the success or failure of the transformation.
+    """
+    if multiplier <= 0:
+        return f"Error: Multiplier must be greater than 0. Provided value: {multiplier}."
+    
+    if "red" in agent_name.lower():
+        if v1.muliply(resource_to_change_value, multiplier):
+            return f"The value of '{resource_to_change_value}' has been successfully transformed for Player RED by a factor of {multiplier}."
+        return f"Error: Resource '{resource_to_change_value}' not found in the available pool."
+    
+    elif "blue" in agent_name.lower():
+        if v2.muliply(resource_to_change_value, multiplier):
+            return f"The value of '{resource_to_change_value}' has been successfully transformed for Player BLUE by a factor of {multiplier}."
+        return f"Error: Resource '{resource_to_change_value}' not found in the available pool."
+    
+    return f"Error: Agent '{agent_name}' not found in the available pool."
+
+@tool
 def chain_of_thought_reasoning(state_description: str) -> str:
     """
     Perform chain-of-thought reasoning to analyze the current game state 
