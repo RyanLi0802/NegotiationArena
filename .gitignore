@@ -9,6 +9,7 @@ __pycache__/
 
 # experiment logs
 .logs/
+logs/
 
 # Distribution / packaging
 .Python
