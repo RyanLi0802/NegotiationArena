@@ -60,8 +60,6 @@ All the responses you send should contain the following and in this order:
 
 ```
 <{MY_NAME_TAG}> [add here] </{MY_NAME_TAG}>
-<{GAME_RESOURCE_TAG}> [add here] </{GAME_RESOURCE_TAG}>
-<{GOALS_TAG}> [add here] </{GOALS_TAG}>
 <{REASONING_TAG}> [add here] </{REASONING_TAG}>
 <{PLAYER_ANSWER_TAG}> [add here] </{PLAYER_ANSWER_TAG}>
 <{MESSAGE_TAG}> [add here] </{MESSAGE_TAG}>

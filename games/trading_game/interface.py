@@ -22,9 +22,14 @@ class TradingAgentMessage(AgentMessage):
             keys = sorted(list(trade.keys()), reverse=True)
             trade = f"Player {keys[0]} Gets {trade[keys[0]]} | Player {keys[1]} Gets {trade[keys[1]]}"
         
-        if GAME_RESOURCE_TAG in self.public:
+        if GAME_RESOURCE_TAG in self.public and OTHER_PLAYER_GOAL_TAG in self.secret:
             resource = self.public[GAME_RESOURCE_TAG]
-            r = f"""<{GAME_RESOURCE_TAG}> {resource} </{GAME_RESOURCE_TAG}>
+            other_player_goal = self.secret[OTHER_PLAYER_GOAL_TAG]
+            r = f"""You currently have access to the following:
+<{GAME_RESOURCE_TAG}> {resource} </{GAME_RESOURCE_TAG}>
+<{GOALS_TAG}> {other_player_goal} </{GOALS_TAG}>
+
+The other player has sent you the following message:
 <{OTHER_PLAYER_MESSAGE}> {message} </{OTHER_PLAYER_MESSAGE}>
 <{OTHER_PLAYER_ANSWER}> {answer} </{OTHER_PLAYER_ANSWER}>
 <{OTHER_PLAYER_PROPOSED_TRADE}> {trade} </{OTHER_PLAYER_PROPOSED_TRADE}>
@@ -38,9 +43,10 @@ class TradingAgentMessage(AgentMessage):
 
 
 class TradingGameDefaultParser(ExchangeGameDefaultParser):
-    def __init__(self, resources_in_game=None):
+    def __init__(self, resources_in_game=None, player_goals=None):
         super().__init__()
         self.resources_in_game = resources_in_game
+        self.player_goals = player_goals
 
     def instantiate_prompt(
         self,
@@ -90,25 +96,30 @@ class TradingGameDefaultParser(ExchangeGameDefaultParser):
     def parse(self, response):
         ms = TradingAgentMessage()
 
-        resources = Resources.from_string(
-            get_tag_contents(response, GAME_RESOURCE_TAG)
-        )
-        goal = get_tag_contents(response, GOALS_TAG)
+        # resources = Resources.from_string(
+        #     get_tag_contents(response, GAME_RESOURCE_TAG)
+        # )
+        # goal = get_tag_contents(response, GOALS_TAG)
         answer = get_tag_contents(response, PLAYER_ANSWER_TAG)
         reasoning = get_tag_contents(response, REASONING_TAG)
         message = get_tag_contents(response, MESSAGE_TAG)
         trade = self.parse_trade(response, PROPOSED_TRADE_TAG)
         my_name = get_tag_contents(response, MY_NAME_TAG)
 
+        ms.add_public(MY_NAME_TAG, my_name)
         ms.add_public(MESSAGE_TAG, message)
         ms.add_public(PLAYER_ANSWER_TAG, answer)
         ms.add_public(PROPOSED_TRADE_TAG, trade)
         if self.resources_in_game:
             ms.add_public(GAME_RESOURCE_TAG, f"{self.resources_in_game}")
 
-        ms.add_secret(GAME_RESOURCE_TAG, resources)
-        ms.add_secret(MY_NAME_TAG, my_name)
-        ms.add_secret(GOALS_TAG, goal)
+        # ms.add_secret(GAME_RESOURCE_TAG, resources)
+        # ms.add_secret(MY_NAME_TAG, my_name)
+        if self.player_goals:
+            goal = self.player_goals[0] if "red" in my_name.lower() else self.player_goals[1]
+            other_goal = self.player_goals[1] if "red" in my_name.lower() else self.player_goals[0]
+            ms.add_secret(GOALS_TAG, goal)
+            ms.add_secret(OTHER_PLAYER_GOAL_TAG, other_goal)
         ms.add_secret(REASONING_TAG, reasoning)
 
         return ms

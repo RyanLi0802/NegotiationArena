@@ -1,0 +1,72 @@
+Game Settings
+
+	available_resources_in_game: X: 25, Y: 0, Z: 20
+------------------ 
+Player 1 Settings:
+	player_names: Player RED
+	player_initial_goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do.
+Acquire as much value from the resources as possible.
+	player_initial_resources: X: 0, Y: 0, Z: 0
+	player_roles: You are Player RED, start by making a proposal.
+
+Player 2 Settings:
+	player_names: Player BLUE
+	player_initial_goals: Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do.
+Acquire as much value from the resources as possible.
+	player_initial_resources: X: 0, Y: 0, Z: 0
+	player_roles: You are Player BLUE, start by responding to a trade.
+
+------------------ 
+Current Iteration: 1
+Turn: 0
+my name: Player RED
+message: Let's try to make a fair trade. I'm proposing a split that could work well for both of us.
+player answer: NONE
+newly proposed trade: {'RED': {'X': 20, 'Z': 10}, 'BLUE': {'X': 5, 'Z': 10}}
+
+Current Iteration: 2
+Turn: 1
+my name: Player BLUE
+message: I think I would need a bit more value from the resources to make this trade fair. Let's try splitting the resources differently.
+player answer: NONE
+newly proposed trade: {'RED': {"{'X'": 15, "'Z'": 10}, 'BLUE': {"{'X'": 10, "'Z'": 10}}
+
+Current Iteration: 3
+Turn: 0
+my name: Player RED
+message: I understand. How about I get a slightly better share of X? Here's a new proposal.
+player answer: NONE
+newly proposed trade: {'RED': {'X': 18, 'Z': 10}, 'BLUE': {'X': 7, 'Z': 10}}
+
+Current Iteration: 4
+Turn: 1
+my name: Player BLUE
+message: I appreciate the revised proposal, but I think I would need a slightly better share to agree. Let's try adjusting the split a little bit more.
+player answer: NONE
+newly proposed trade: {'RED': {"{'X'": 16, "'Z'": 10}, 'BLUE': {"{'X'": 9, "'Z'": 10}}
+
+Current Iteration: 5
+Turn: 0
+my name: Player RED
+message: We're getting closer. Let's try one last adjustment to see if it works for both of us.
+player answer: NONE
+newly proposed trade: {'RED': {'X': 17, 'Z': 10}, 'BLUE': {'X': 8, 'Z': 10}}
+
+Current Iteration: 6
+Turn: 1
+my name: Player BLUE
+message: This seems like a fair compromise. I accept the proposal. Thank you for negotiating!
+player answer: ACCEPT
+newly proposed trade: NONE
+
+------------------ 
+Current Iteration: END
+Turn: None
+player_goals: [Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do.
+Acquire as much value from the resources as possible., Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do.
+Acquire as much value from the resources as possible.]
+initial_resources: [Resources(resource_dict={'X': 0, 'Y': 0, 'Z': 0}), Resources(resource_dict={'X': 0, 'Y': 0, 'Z': 0})]
+proposed_trade: {'RED': {'X': 17, 'Z': 10}, 'BLUE': {'X': 8, 'Z': 10}}
+final_response: ACCEPT
+final_resources: [Resources(resource_dict={'X': 17, 'Z': 10}), Resources(resource_dict={'X': 8, 'Z': 10})]
+player_outcome: ['Acquired Resources: X: 17, Z: 10, Y: 0;\nTotal Acquired Value: 44', 'Acquired Resources: X: 8, Z: 10, Y: 0;\nTotal Acquired Value: 38']

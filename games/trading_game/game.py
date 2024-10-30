@@ -21,7 +21,7 @@ class TradingGame(AlternatingGameEndsOnTag):
         super().__init__(**kwargs)
         
         self.game_interface = (
-            TradingGameDefaultParser(resources_support_set)
+            TradingGameDefaultParser(resources_support_set, player_goals)
             if game_interface is None
             else game_interface
         )
@@ -41,7 +41,7 @@ class TradingGame(AlternatingGameEndsOnTag):
             }
         ]
         self.resources_support_set = resources_support_set
-        self.player_goals = player_goals
+        self.player_initial_goals = player_goals
         self.player_initial_resources = player_initial_resources
         self.player_social_behaviour = player_social_behaviour
         self.player_roles = player_roles

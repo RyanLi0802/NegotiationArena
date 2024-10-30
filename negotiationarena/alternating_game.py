@@ -39,6 +39,7 @@ class AlternatingGame(Game):
         log_dir: str = ".logs",
         log_path=None,
         iterations: int = 8,
+        log_secret: bool = True
     ):
         super().__init__(players=players, log_dir=log_dir, log_path=log_path)
 
@@ -49,6 +50,7 @@ class AlternatingGame(Game):
         self.iterations = iterations
         self.current_iteration = 1
         self.game_interface = None
+        self.log_secret = log_secret
 
     @abstractmethod
     def game_over(self):
@@ -250,17 +252,29 @@ class AlternatingGame(Game):
             # turn = state['turn']
             if state["current_iteration"] == "END":
                 continue
-            data = [
-                "Current Iteration: {}".format(state["current_iteration"]),
-                "Turn: {}".format(state["turn"]),
-                *[
-                    "{}: {}".format(k, v)
-                    for k, v in {
-                        **state["player_public_info_dict"],
-                        **state["player_private_info_dict"],
-                    }.items() if k != GAME_RESOURCE_TAG
-                ],
-            ]
+            if self.log_secret:
+                data = [
+                    "Current Iteration: {}".format(state["current_iteration"]),
+                    "Turn: {}".format(state["turn"]),
+                    *[
+                        "{}: {}".format(k, v)
+                        for k, v in {
+                            **state["player_public_info_dict"],
+                            **state["player_private_info_dict"],
+                        }.items() if k != GAME_RESOURCE_TAG and k != GOALS_TAG and k != OTHER_PLAYER_GOAL_TAG
+                    ],
+                ]
+            else:
+                data = [
+                    "Current Iteration: {}".format(state["current_iteration"]),
+                    "Turn: {}".format(state["turn"]),
+                    *[
+                        "{}: {}".format(k, v)
+                        for k, v in {
+                            **state["player_public_info_dict"],
+                        }.items() if k != GAME_RESOURCE_TAG
+                    ],
+                ]
             log_str += "\n".join(data)
             log_str += "\n\n"
 
@@ -294,13 +308,14 @@ class AlternatingGameEndsOnTag(AlternatingGame):
     """
 
     def __init__(
-        self, players: List[List], log_dir=".logs", log_path=None, iterations=8
+        self, players: List[List], log_dir=".logs", log_path=None, iterations=8, log_secret=True,
     ):
         super().__init__(
             players=players,
             log_dir=log_dir,
             log_path=log_path,
             iterations=iterations,
+            log_secret=log_secret,
         )
 
         self.end_tag = ACCEPTING_TAG

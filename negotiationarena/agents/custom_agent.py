@@ -23,6 +23,7 @@ class CustomAgent(Agent):
         max_tokens=400,
         seed=None,
         tools=None,
+        verbose=True,
     ):
         super().__init__(agent_name)
         self.run_epoch_time_ms = str(round(time.time() * 1000))
@@ -44,6 +45,9 @@ class CustomAgent(Agent):
             self.llm.client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY").chat.completions
         
         self.tools = tools
+        self.verbose = verbose
+        
+        print(f"Initialized custom agent with base llm {model}")
         
 
     def init_agent(self, system_prompt, role):
@@ -90,10 +94,6 @@ class CustomAgent(Agent):
         """
 
         if message:
-#             user_prompt = f'''The opponent has sent you the following message:
-# """
-# {message}
-# """'''
             self.update_conversation_tracking("user", message)
 
         response = self.think()
@@ -114,8 +114,22 @@ class CustomAgent(Agent):
         # for msg in self.conversation:
         #     messages.append((msg["role"], msg['content']))
         msg = self.conversation[-1]
-        response = self.agent.invoke({"messages": [(msg['role'], msg['content'])]}, self.agent_config)
-        # print(response)
+        
+        prompt = msg["content"]
+        if len(self.conversation) >= 3:
+            if "empathy_simulation" in self.tools:
+                prompt += "\n\n Use the empathy_simulation tool to simulate the opponent's perspectives before making a new trade proposal."
+            if "strategy_planning" in self.tools:
+                prompt += "\n\n Use the strategy_planning tool to perform strategic reasoning and plan multiple steps ahead before making a trade proposal."
+            if "emotional_appeal" in self.tools:
+                prompt += "\n\n use the emotional_appeal tool to persuade your opponent into accepting your trade proposal."
+        
+        if self.verbose:
+            print(prompt)
+        
+        response = self.agent.invoke({"messages": [(msg['role'], prompt)]}, self.agent_config)
+        if self.verbose:
+            print(response)
         return response['messages'][-1].content
 
     def update_conversation_tracking(self, role, message):

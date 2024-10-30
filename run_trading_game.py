@@ -85,7 +85,9 @@ for _ in range(3):
                 f"You are {AGENT_ONE}, start by making a proposal.",
                 f"You are {AGENT_TWO}, start by responding to a trade.",
             ],
-            log_dir=".logs/trading_game_base_script",
+            log_dir=".logs/trading_game_base_script_no_reasoning",
+            log_path=".logs/trading_game_base_script_no_reasoning/base_script",
+            log_secret=False,
         )
 
 

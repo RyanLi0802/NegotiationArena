@@ -57,16 +57,16 @@ class TradingGoal(Goal):
     def __init__(self, inital_resources: Resources, valuation: Valuation):
         self.inital_resources = inital_resources
         self.valuation = valuation
-        self.goal = f"Here is how you value the available resources: {valuation}. Your opponent might value the resources differently than you do.\nAcquire as much value from the resources as possible."
+        self.goal = None
 
     def __str__(self):
-        return self.goal
+        return f"Here is how you value the available resources: {self.valuation}. Your opponent might value the resources differently than you do.\nAcquire as much value from the resources as possible."
     
     def __repr__(self):
-        return self.goal
+        return f"Here is how you value the available resources: {self.valuation}. Your opponent might value the resources differently than you do.\nAcquire as much value from the resources as possible."
 
     def to_prompt(self):
-        return self.goal
+        return f"Here is how you value the available resources: {self.valuation}. Your opponent might value the resources differently than you do.\nAcquire as much value from the resources as possible."
 
     def goal_reached(self, final_resources: Resources):
         acquired_resources = final_resources - self.inital_resources

@@ -1,17 +1,17 @@
 Game Settings
 
-	resources_support_set: X: 25, Y: 0, Z: 20
+	available_resources_in_game: X: 25, Y: 0, Z: 20
 ------------------ 
 Player 1 Settings:
 	player_names: Player RED
-	player_goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do.
+	player_initial_goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do.
 Acquire as much value from the resources as possible.
 	player_initial_resources: X: 0, Y: 0, Z: 0
 	player_roles: You are Player RED, start by making a proposal.
 
 Player 2 Settings:
 	player_names: Player BLUE
-	player_goals: Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do.
+	player_initial_goals: Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do.
 Acquire as much value from the resources as possible.
 	player_initial_resources: X: 0, Y: 0, Z: 0
 	player_roles: You are Player BLUE, start by responding to a trade.
@@ -23,7 +23,6 @@ message: Hi Player BLUE, here's my initial proposal for splitting the resources.
 player answer: NONE
 newly proposed trade: {'RED': {'X': 20, 'Z': 8}, 'BLUE': {'X': 5, 'Z': 12}}
 my name: Player RED
-my goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: Given that I value Y significantly more than X and Z, my goal is to try to get as much X and Y as possible. I will propose a split that gives me a substantial amount of X since Y is unavailable, and I will also try to get a reasonable share of Z.
 
 Current Iteration: 2
@@ -32,7 +31,6 @@ message: Hi Player RED, thank you for the proposal. I believe we can find a more
 player answer: NONE
 newly proposed trade: {'RED': {'X': 18, 'Z': 7}, 'BLUE': {'X': 7, 'Z': 13}}
 my name: Player BLUE
-my goals: Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: The proposed trade gives Player RED 20X + 8Z, which is worth 20 + 24 = 44 dollars to me, and Player BLUE gets 5X + 12Z, which is worth 5 + 36 = 41 dollars to me. This is relatively close in value, but I would like to see if I can negotiate for a slightly better deal for myself. I have 3 proposals available, so I will use one here.
 
 Current Iteration: 3
@@ -41,7 +39,6 @@ message: Thank you for your counter-offer, Player BLUE. Let's see if we can refi
 player answer: NONE
 newly proposed trade: {'RED': {'X': 18, 'Z': 9}, 'BLUE': {'X': 7, 'Z': 11}}
 my name: Player RED
-my goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: The counter-offer still provides me with a decent amount of X, but I get less Z than initially proposed. Since Z is not as valuable to me, I am okay with this trade, but I want to see if I can get a bit more Z without losing too much of X.
 
 Current Iteration: 4
@@ -50,7 +47,6 @@ message: Thanks for refining the offer, Player RED. I'd like to suggest a slight
 player answer: NONE
 newly proposed trade: {'RED': {'X': 16, 'Z': 8}, 'BLUE': {'X': 9, 'Z': 12}}
 my name: Player BLUE
-my goals: Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: The new proposal gives Player RED 18X + 9Z, which is worth 18 + 27 = 45 dollars to me, and Player BLUE gets 7X + 11Z, which is worth 7 + 33 = 40 dollars to me. This is less favorable compared to the previous proposal. I will make another counter-offer to try and equalize the value more. This will be my second proposal.
 
 Current Iteration: 5
@@ -59,7 +55,6 @@ message: I appreciate your flexibility, Player BLUE. Here’s a slight adjustmen
 player answer: NONE
 newly proposed trade: {'RED': {'X': 17, 'Z': 9}, 'BLUE': {'X': 8, 'Z': 11}}
 my name: Player RED
-my goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: The new proposal from Player BLUE reduces my share of X and Z compared to my last offer. I need to ensure I am getting a fair value. I will try to get a bit more X and Z to make it more balanced for me.
 
 Current Iteration: 6
@@ -68,7 +63,6 @@ message: Thank you for the adjustment, Player RED. Here is my final counter-offe
 player answer: NONE
 newly proposed trade: {'RED': {'X': 16, 'Z': 10}, 'BLUE': {'X': 9, 'Z': 10}}
 my name: Player BLUE
-my goals: Here is how you value the available resources: X: 1 DOLLARS, Y: 4 DOLLARS, Z: 3 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: The new proposal gives Player RED 17X + 9Z, which is worth 17 + 27 = 44 dollars to me, and Player BLUE gets 8X + 11Z, which is worth 8 + 33 = 41 dollars to me. This is very close to the initial offer and still slightly less favorable for me. I will make one final counter-offer to try and reach a more balanced split. This will be my third and final proposal.
 
 Current Iteration: 7
@@ -77,7 +71,6 @@ message: I accept your final counter-offer, Player BLUE. Thank you for the negot
 player answer: ACCEPT
 newly proposed trade: NONE
 my name: Player RED
-my goals: Here is how you value the available resources: X: 2 DOLLARS, Y: 50 DOLLARS, Z: 1 DOLLARS. Your opponent might value the resources differently than you do. Acquire as much value from the resources as possible.
 reason: The final counter-offer gives me a good amount of X and an equal share of Z compared to Player BLUE. This is a fair trade-off considering my valuation and the number of proposals I have left.
 
 ------------------ 
