@@ -262,6 +262,7 @@ python experiments/run_simple_experiment.py \
 echo Experiment 4: swap_value
 python experiments/run_simple_experiment.py \
   -m gpt-4o \
+  -w "summarization" \
   -r 20 \
   -s 1234 \
   -a "Be sure use the swap_value tool to swap the value of resource Y and resource Z for either yourself or your opponent. DO NOT make a trade before swapping values." \

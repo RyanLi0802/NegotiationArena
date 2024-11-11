@@ -13,6 +13,8 @@ from games.trading_game.game import TradingGame
 
 from experiments.game_variables import available_resources, r1, r2, v1, v2
 from experiments.prompt_utils import get_discriminator_prompt_single_script, get_discriminator_prompt_double_script
+from experiments.base_monitor_agent import BaseAgent
+from experiments.summarization_agent import SummarizationAgent
 from experiments.tools import get_tools_by_names
 from experiments.utils import parse_final_answer
 
@@ -49,6 +51,7 @@ python experiments/run_simple_experiment.py -m gpt-4o -r 5 -s 1234 -a "You shoul
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', '-m', type=str, default='gpt-4o', help='the base model name')
+    parser.add_argument('--weak_agent', '-w', type=str, default="summarization", choices=["base", "summarization"], help='type of weak agent')
     parser.add_argument('--rounds', '-r', type=int, default=1, help='number of rounds to run the experiment')
     parser.add_argument('--seed', '-s', type=int, help='seed for more deterministic results')
     parser.add_argument('--discriminator_prompt', '-d', type=str, default="single_script", choices=["single_script", "double_script"], help='type of discriminator agent')
@@ -75,6 +78,8 @@ def main():
     
     predictions = []
     targets = []
+    
+    weak_agent = BaseAgent("gpt-4o") if args.weak_agent == "base" else SummarizationAgent("gpt-4o")
     
     for i in range(args.rounds):
         try:
@@ -186,25 +191,27 @@ def main():
             else:
                 client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY")
             
-            if args.discriminator_prompt == "single_script":
-                discriminator_prompt = get_discriminator_prompt_single_script(script1, tool_descriptions)
-            elif args.discriminator_prompt == "double_script":
-                discriminator_prompt = get_discriminator_prompt_double_script(base_script, script1)
-            else:
-                raise NotImplementedError()
+            # if args.discriminator_prompt == "single_script":
+            #     discriminator_prompt = get_discriminator_prompt_single_script(script1, tool_descriptions)
+            # elif args.discriminator_prompt == "double_script":
+            #     discriminator_prompt = get_discriminator_prompt_double_script(base_script, script1)
+            # else:
+            #     raise NotImplementedError()
             
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": discriminator_prompt,
-                    }
-                ],
-                temperature=0.0,
-                seed=new_seed,
-            )
-            predicted_name = parse_final_answer(response.choices[0].message.content.strip(), AGENT_ONE, AGENT_TWO)
+            # response = client.chat.completions.create(
+            #     model=model,
+            #     messages=[
+            #         {
+            #             "role": "user",
+            #             "content": discriminator_prompt,
+            #         }
+            #     ],
+            #     temperature=0.0,
+            #     seed=new_seed,
+            # )
+            # predicted_name = parse_final_answer(response.choices[0].message.content.strip(), AGENT_ONE, AGENT_TWO)
+            
+            predicted_name = weak_agent.predict(base_script, script1)
             predictions.append(0 if predicted_name == AGENT_ONE else 1)
             targets.append(target)
             num_succeed += 1
