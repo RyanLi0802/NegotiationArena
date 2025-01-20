@@ -7,6 +7,7 @@ import json
 import openai
 import random
 import re
+from typing import Dict, Any
 
 
 client = OpenAI()
@@ -155,6 +156,90 @@ def chain_of_thought_reasoning(state_description: str) -> str:
     return response['choices'][0]['message']['content']
 
 
+@tool
+def chain_of_thought(
+    my_values: Dict[str, int],      # My value per item type
+    current_offer: Dict[str, int],  # Units of each item being offered
+    total_units: Dict[str, int],    # Total available units per item
+    round_num: int                  # Current negotiation round
+) -> Dict[str, Any]:
+
+    """
+    Perform structured reasoning for negotiation decisions
+    Returns both reasoning steps and final decision
+
+    Args:
+        my_values (Dict[str, int]): my current valuation of the each item type.
+            example: my_values = {
+                        "A": 6,   # I value each item A at 6 points
+                        "B": 4,   # I value each item B at 4 points
+                    }
+        
+        current_offer (Dict[str, int]): current offer from the opponent
+            example: current_offer = {
+                        "A": 4,   # The opponent offers 4 item A
+                        "B": 2,   # The opponent offers 2 item B
+                    }
+        
+        total_units (Dict[str, int]): total units of each item type
+            example: total_units = {
+                        "A": 10,  # There are 10 A available
+                        "B": 5,   # There are 5 B available
+                    }
+
+        round_num (int): current negotiation round
+
+
+    Returns:
+        Dict[str, Any]: Reasoning steps and final decision
+    """
+
+    reasoning_chain = []
+    final_decision = {}
+
+    # Step 1: Calculate total value of current offer for me
+    offer_value = sum(current_offer[item] * my_values[item] for item in current_offer)
+    reasoning_chain.append(f"1. Calculate total value of offered items: {offer_value} points")
+    for item in current_offer:
+        reasoning_chain.append(f"   - {item.capitalize()}: {current_offer[item]} units × {my_values[item]} points = {current_offer[item] * my_values[item]} points")
+
+    # Step 2: Calculate maximum possible value
+    max_value = sum(min(total_units[item], total_units[item]) * my_values[item] for item in total_units)
+    reasoning_chain.append(f"2. Maximum possible value: {max_value} points")
+    for item in total_units:
+        reasoning_chain.append(f"   - Best possible {item.capitalize()}: {total_units[item]} × {my_values[item]} = {total_units[item] * my_values[item]}")
+
+    # Step 3: Evaluate offer fairness
+    fairness = offer_value / max_value
+    reasoning_chain.append(f"3. Offer fairness: offer_value / max_value = {offer_value} / {max_value} = {fairness * 100:.2f}%")
+
+    # Step 4: Analyze distribution by item
+    for item in current_offer:
+        available = total_units[item]
+        offered = current_offer[item]
+        value_per_unit = my_values[item]
+        reasoning_chain.append(f"   - {item.capitalize()}: {offered}/{available} units offered (value/unit = {value_per_unit})")
+    
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "user", "content": f"You are playing a strategic game of splitting and trading resources with another player. You and your opponent will both have access to a pool of resources available in the game, and the two of you will need to decide on how to split these resources. Note that you two may have different valuations for each item type. Based on the reasoning steps above, do you accept the offer or make a counter-offer? Reasoning steps: {reasoning_chain}. If you decide to accept the offer, please respond with 'accept'. If you decide to not accept the offer, please respond with 'no'."},
+        ]
+    )
+
+    if "accept" in response.choices[0].message.content.lower():
+        final_decision = "accept"
+    elif "no" in response.choices[0].message.content.lower():
+        final_decision = "not accept"
+    else:
+        final_decision = "accept"
+
+    return {
+        "reasoning": reasoning_chain,
+        "decision": final_decision
+    }
+
+
 def get_current_state_for_agent(agent_name):
     
     state = {
@@ -231,7 +316,6 @@ Strategy: """
     # Extract and return the strategy from the response
     return parse_strategy(response.choices[0].message.content.strip())
 
-@tool
 def empathy_simulation(opponent_name: str) -> str:
     """
     Perform empathy simulation that analyzes the current game state and simulates the perspectives of the provided agent.
@@ -318,6 +402,7 @@ all_tools = {
     "strategy_planning": strategy_planning,
     "empathy_simulation": empathy_simulation,
     "emotional_appeal": emotional_appeal,
+    "chain_of_thought": chain_of_thought,
 }
 
 def get_tools_by_names(tool_names):

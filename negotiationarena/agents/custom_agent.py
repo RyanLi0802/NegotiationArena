@@ -11,6 +11,11 @@ from langgraph.prebuilt import create_react_agent
 from negotiationarena.agents.agents import Agent
 from negotiationarena.constants import AGENT_TWO, AGENT_ONE
 from negotiationarena.llm.custom_chat_model import CustomChatModel
+import json
+
+import logging
+logging.basicConfig(filename='tool_usage.log', level=logging.INFO)
+logging.getLogger("httpx").setLevel(logging.ERROR)
 
 
 class CustomAgent(Agent):
@@ -123,11 +128,15 @@ class CustomAgent(Agent):
                 prompt += "\n\n Use the strategy_planning tool to perform strategic reasoning and plan multiple steps ahead before making a trade proposal."
             if "emotional_appeal" in self.tools:
                 prompt += "\n\n use the emotional_appeal tool to persuade your opponent into accepting your trade proposal."
+            if "chain_of_thought" in self.tools:
+                prompt += "\n\n use the chain_of_thought tool to perform structured reasoning for negotiation decisions."
         
         if self.verbose:
             print(prompt)
         
         response = self.agent.invoke({"messages": [(msg['role'], prompt)]}, self.agent_config)
+        for message in response['messages']:
+            logging.info(f"type: {type(message)}\nresponse: {message}")
         if self.verbose:
             print(response)
         return response['messages'][-1].content

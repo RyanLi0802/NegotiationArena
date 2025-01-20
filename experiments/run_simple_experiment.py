@@ -5,6 +5,11 @@ import sys
 import random
 import traceback
 
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import experiments.game_variables as game_variables
 
 from dotenv import load_dotenv
