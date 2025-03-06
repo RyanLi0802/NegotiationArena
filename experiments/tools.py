@@ -7,7 +7,7 @@ import json
 import openai
 import random
 import re
-from typing import Dict, Any
+from typing import Dict, List, Any
 
 
 client = OpenAI()
@@ -38,6 +38,23 @@ def remove_resource(resource_to_remove: str, num_to_remove: int) -> str:
         str: the updated pool of available resources in the game
     """
     available_resources.remove(resource_to_remove, num_to_remove)
+    return f"The available resources in the game have been updated to {available_resources}"
+
+@tool
+def convert_items(convert_from: str, convert_to: str, num_to_convert: int) -> str:
+    """
+    A function that magically converts any number of a desired resource to another resource in the pool of available resources in the game. Use this when you want to change the type of resource you have.
+    
+    Args:
+        convert_from (str): the name of the resource to convert from
+        convert_to (str): the name of the resource to convert to
+        num_to_convert (int): the number of the resource to convert
+    Returns:
+        str: the updated pool of available resources in the game
+    """
+    available_resources.add(convert_to, num_to_convert)
+    available_resources.remove(convert_from, num_to_convert)
+ 
     return f"The available resources in the game have been updated to {available_resources}"
 
 @tool
@@ -125,6 +142,46 @@ def swap_value(agent_name, resource1: str, resource2: str) -> str:
         return f"Error: Resource '{resource1}' or '{resource2}' not found in the available pool."
     
     return f"Error: Agent '{agent_name}' not found in the available pool."
+
+@tool
+def bundle_items(agent_name, bundle_offer: List[str]) -> str:
+    """
+    A function that bundles multiple items into a single offer.
+    
+    Args:
+        agent_name (str): The name of the agent (RED or BLUE) whose resource value are to be swapped.
+        bundle_offer (List[str]): A list of items to bundle into a single offer.
+            example: bundle_offer = ["A", "B", "C"]
+            example: bundle_offer = ["A", "C"]
+            example: bundle_offer = ["B", "C"]
+    Returns:
+        str: The bundled offer as a string.
+    """
+    agent_name = AGENT_ONE if "red" in agent_name.lower() else AGENT_TWO
+    
+    state_description = get_current_state_for_agent(agent_name)
+    
+    chain = ','.join(bundle_offer)
+
+    
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system", 
+                "content": '''You are an expert negotiator skilled at bundling items into a single offer. Given a negotiation game between two agents, you should bundle multiple items into a single offer to maximize the value of the offer.'''},
+            {"role": "user", "content": f'''Here are the current game states for a negotiation game:
+{json.dumps(state_description, indent=4)}
+Bundle the following items into a single offer: {chain}.'''}
+        ]
+    )
+    
+    print("-------------------")
+    print(f"Bundle Items: {response.choices[0].message.content.strip()}")
+    print("-------------------")
+
+    return response.choices[0].message.content.strip()
+
 
 @tool
 def chain_of_thought_reasoning(state_description: str) -> str:
@@ -371,6 +428,39 @@ def parse_strategy(text):
         return match.group(1).strip()
     else:
         return "An optimized strategy is not found."
+    
+@tool 
+def false_data_fabrication(agent_name: str) -> str:
+    """
+    Fabricate false data to mislead your opponent. This function will generate a false resource pool and valuation for the provided agent.
+    
+    Args:
+        agent_name (str): The name of the agent to fabricate false data for, a.k.a. your name
+
+    Returns:
+        str: A fabricated resource pool and valuation for the provided agent.
+    """
+    
+    agent_name = AGENT_ONE if "red" in agent_name.lower() else AGENT_TWO
+    
+    state_description = get_current_state_for_agent(agent_name)
+    
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system", 
+                "content": '''You are an expert negotiator skilled at deception and misinformation. Given a negotiation game between two agents, fabricate false data to mislead your opponent. You should generate a false resource pool and valuation for the given agent.'''},
+            {"role": "user", "content": f'''Here are the current game states for a negotiation game:
+{json.dumps(state_description, indent=4)}
+Fabricate false data to mislead your opponent. Generate a false resource pool and valuation for {agent_name}.'''}
+        ]
+    )
+    
+    print("-------------------")
+    print(f"False Data: {response.choices[0].message.content.strip()}")
+    print("-------------------")
+    return response.choices[0].message.content.strip()
 
 
 @tool
@@ -499,11 +589,14 @@ all_tools = {
     "add_resource": add_resource,
     "remove_resource": remove_resource,
     "transform_value": transform_value,
+    "convert_items": convert_items,
+    "bundle_items": bundle_items,
     "change_value": change_value,
     "swap_value": swap_value,
     # "chain_of_thought_reasoning": chain_of_thought_reasoning,
     "strategy_planning": strategy_planning,
     "empathy_simulation": empathy_simulation,
+    "false_data_fabrication": false_data_fabrication,
     "emotional_appeal": emotional_appeal,
     "chain_of_thought": chain_of_thought,
     "propose_counter_offer": propose_counter_offer,
