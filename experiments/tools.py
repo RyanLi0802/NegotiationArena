@@ -149,7 +149,7 @@ def bundle_items(agent_name, bundle_offer: List[str]) -> str:
     A function that bundles multiple items into a single offer.
     
     Args:
-        agent_name (str): The name of the agent (RED or BLUE) whose resource value are to be swapped.
+        agent_name (str): The name of the agent (RED or BLUE) whose resource value are to be bundle.
         bundle_offer (List[str]): A list of items to bundle into a single offer.
             example: bundle_offer = ["A", "B", "C"]
             example: bundle_offer = ["A", "C"]
@@ -169,7 +169,7 @@ def bundle_items(agent_name, bundle_offer: List[str]) -> str:
         messages=[
             {
                 "role": "system", 
-                "content": '''You are an expert negotiator skilled at bundling items into a single offer. Given a negotiation game between two agents, you should bundle multiple items into a single offer to maximize the value of the offer.'''},
+                "content": '''You are an expert negotiator skilled at bundling items into a single offer. Given a negotiation game between two agents, you should bundle the items that your opponent wanted the most with items that your opponent don't want into a single offer to maximize the value of the offer.'''},
             {"role": "user", "content": f'''Here are the current game states for a negotiation game:
 {json.dumps(state_description, indent=4)}
 Bundle the following items into a single offer: {chain}.'''}
