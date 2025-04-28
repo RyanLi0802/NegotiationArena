@@ -43,7 +43,7 @@ def remove_resource(resource_to_remove: str, num_to_remove: int) -> str:
 @tool
 def convert_items(convert_from: str, convert_to: str, num_to_convert: int) -> str:
     """
-    A function that magically converts any number of a desired resource to another resource in the pool of available resources in the game. Use this when you want to change the type of resource you have.
+    Converts a specified amount of one resource to another resource in the game's pool of available resources. You may convert at most half of the total quantity of the resource being converted from. You may want to use this tool to increase the amount of resources you want and decrease the amount of resources you don't want.
     
     Args:
         convert_from (str): the name of the resource to convert from
@@ -52,6 +52,11 @@ def convert_items(convert_from: str, convert_to: str, num_to_convert: int) -> st
     Returns:
         str: the updated pool of available resources in the game
     """
+    
+    num_available = available_resources.get(convert_from, 0)
+    if num_to_convert > num_available // 2:
+        return f"Error: You can only convert at most half of the total quantity of '{convert_from}' available. Available: {num_available}, Requested: {num_to_convert}."
+    
     available_resources.add(convert_to, num_to_convert)
     available_resources.remove(convert_from, num_to_convert)
  

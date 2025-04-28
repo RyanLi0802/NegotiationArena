@@ -26,17 +26,20 @@ class ChatGPTAgent(Agent):
         self.model = model
         self.conversation = []
         self.prompt_entity_initializer = "system"
+        self.temperature = temperature
         self.seed = (
             int(self.run_epoch_time_ms) + random.randint(0, 2**16)
             if seed is None
             else seed
         )
-        if 'gpt' in model:
+        if 'llama' not in model:
             self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+            if model == "o3" or model == "o4-mini":
+                self.temperature = 1
         else:
             self.client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY")
-        self.temperature = temperature
-        self.max_tokens = max_tokens
+        
+        # self.max_tokens = max_tokens
 
     def init_agent(self, system_prompt, role):
         if AGENT_ONE in self.agent_name:
@@ -74,7 +77,6 @@ class ChatGPTAgent(Agent):
             model=self.model,
             messages=self.conversation,
             temperature=self.temperature,
-            max_tokens=self.max_tokens,
             seed=self.seed,
         )
 

@@ -56,6 +56,7 @@ python experiments/run_simple_experiment.py -m gpt-4o -r 5 -s 1234 -a "You shoul
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', '-m', type=str, default='gpt-4o', help='the base model name')
+    parser.add_argument('--weak_model', type=str, default='gpt-4o', help='the weak model name')
     parser.add_argument('--weak_agent', '-w', type=str, default="summarization", choices=["base", "summarization"], help='type of weak agent')
     parser.add_argument('--rounds', '-r', type=int, default=1, help='number of rounds to run the experiment')
     parser.add_argument('--seed', '-s', type=int, help='seed for more deterministic results')
@@ -84,7 +85,9 @@ def main():
     predictions = []
     targets = []
     
-    weak_agent = BaseAgent("gpt-4o") if args.weak_agent == "base" else SummarizationAgent("gpt-4o")
+    weak_model = args.weak_model
+    
+    weak_agent = BaseAgent(weak_model) if args.weak_agent == "base" else SummarizationAgent(weak_model)
     
     for i in range(args.rounds):
         try:
@@ -101,8 +104,8 @@ def main():
             if random.random() < 0.5:
                 target = 0
                 
-                player_red = CustomAgent(agent_name=AGENT_ONE, model="gpt-4o", model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
-                player_blue = ChatGPTAgent(agent_name=AGENT_TWO, model="gpt-4o", seed=new_seed)
+                player_red = CustomAgent(agent_name=AGENT_ONE, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
+                player_blue = ChatGPTAgent(agent_name=AGENT_TWO, model=args.model, seed=new_seed)
                 
                 # if 'gpt' in args.model:
                 #     # a1 = CustomAgent(agent_name=AGENT_ONE, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
@@ -143,8 +146,8 @@ def main():
                 target = 1
                 
                 # switch model names
-                player_blue = CustomAgent(agent_name=AGENT_TWO, model="gpt-4o", model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
-                player_red = ChatGPTAgent(agent_name=AGENT_ONE, model="gpt-4o", seed=new_seed)
+                player_blue = CustomAgent(agent_name=AGENT_TWO, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
+                player_red = ChatGPTAgent(agent_name=AGENT_ONE, model=args.model, seed=new_seed)
                 
                 # if 'gpt' in args.model:
                 #     # a1 = CustomAgent(agent_name=AGENT_TWO, model=args.model, model_type="openai-gpt", temperature=0.3, tools=tools, seed=new_seed)
@@ -188,10 +191,9 @@ def main():
             script1 = os.path.join(c1.log_path, "interaction.log")
             
             # call the discriminator
-            model = args.model if "gpt" in args.model else "default"
             client = None
             
-            if "gpt" in model:
+            if "llama" not in weak_model:
                 client = OpenAI()
             else:
                 client = openai.Client(base_url="http://127.0.0.1:30000/v1", api_key="EMPTY")
